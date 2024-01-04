@@ -90,6 +90,8 @@ export default function Cadastro1({ navigation }) {
         }
         < ActivityIndicator animating={false} theme={{ colors: { primary: 'blue' } }} />
     }
+
+    
     return (
         <ImageBackground
             source={require('../../assets/img/bgTelaCadastro.png')}

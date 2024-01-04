@@ -17,8 +17,10 @@ export default function Provider({ children }) {
     const [telefone, setTelefone] = useState('')
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')
+
     const [imageUser, setImageUser] = useState('')
     const [imageAnimal, setImageAnimal] = useState('')
+
     const [nomeAnimal, setNomeAnimal] = useState('')
     const [idadeAnimal, setIdadeAnimal] = useState('')
     const [comentario, setComentario] = useState('')
@@ -26,6 +28,15 @@ export default function Provider({ children }) {
     const [coloracao, setColoracao] = useState('')
     const [especie, setEspecie] = useState('')
     const [clinicas, setClinicas] = useState([])
+
+    const [imagemId, setImagemId] = useState('')
+    const [enderecoId, setEnderecoId] = useState('')
+    const [codUser, setCodUser] = useState('')
+    const [codAnimal, setCodAnimal] = useState('')
+
+
+    const [user, setUser] = useState([])
+
 
 
     useEffect(() => {
@@ -37,7 +48,8 @@ export default function Provider({ children }) {
             {
                 rua, setRua, numero, setNumero, bairro, setBairro, cep, setCep, cidade, setCidade, estado, setEstado, nome, setNome, sobrenome, setSobrenome,
                 telefone, setTelefone, email, setEmail, senha, setSenha, imageUser, setImageUser, imageAnimal, setImageAnimal, nomeAnimal, setNomeAnimal,
-                idadeAnimal, setIdadeAnimal, comentario, setComentario, sexoAnimal, setSexoAnimal, coloracao, setColoracao, especie, setEspecie, clinicas, setClinicas
+                idadeAnimal, setIdadeAnimal, comentario, setComentario, sexoAnimal, setSexoAnimal, coloracao, setColoracao, especie, setEspecie, clinicas, setClinicas,
+                user, setUser, imagemId, setImagemId, enderecoId, setEnderecoId, codUser, setCodUser, codAnimal, setCodAnimal
             }
         }>
             {children}

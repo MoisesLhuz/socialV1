@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,35 +8,64 @@ import {
     SafeAreaView,
     TextInput,
     TouchableOpacity,
+    Animated,
 } from 'react-native';
 import { BsEnvelope } from "react-icons/bs";
 import { GiPadlock } from "react-icons/gi";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { Context } from '../../context/Provider';
+import Config from '../../config/config.json'
+import axios from 'axios'
 
 
 
 export default function Login({ navigation }) {
 
-    const [email, setEmail] = useState('')
     const [senhaVisivel, setSenhaVisivel] = useState(false)
-    const [senha, setSenha] = useState('')
-
-    const showToast = () => {
-        Toast.show({
-            type: 'success',
-            text1: 'Toast Message',
-            text2: 'Isso é real',
-            autoHide: true,
-            visibilityTime: 1000
-        })
-    }
-
+    const { email, setEmail } = useContext(Context)
+    const { senha, setSenha } = useContext(Context)
+    const [message, setMessage] = useState('')
 
 
     function alternarVisibilidadeSenha() {
         setSenhaVisivel(!senhaVisivel)
     }
+
+    async function doLogin() {
+
+        try {
+            //realiza a requisição para o back end com axios
+            const response = await axios.post(Config.urlRootPhp + '../../../app/Controller/verifyLoginController.php', {
+                email: email,
+                senha: senha
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+
+
+            //aqui ocorre a manipulação da resposta(response.data)
+            if (response.data) {
+                //redirecionamento para tela de home com os dados user
+                navigation.navigate('AreaRestrita')
+            } else {
+                setMessage('Usuario ou senha inválidos!')
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000)
+            }
+
+        } catch (error) {
+            //aqui lidamos com os erros
+            console.error('Erro na requisição:', error)
+
+        }
+    }
+
+
 
     return (
         <SafeAreaView style={styles.safe}>
@@ -48,17 +77,18 @@ export default function Login({ navigation }) {
                 <KeyboardAvoidingView
                     style={styles.container}
                 >
-                    {/* <View>
-                        <Text style={styles.login__msg}>
-                            Usuário ou senha inválidos!
-                        </Text>
-                    </View> */}
+                    <Animated.View style={{ opacity: message ? 1 : 0, marginBottom: 20 }}>
+                        <Text style={{ color: '#fff', fontSize: 25, alignSelf: 'center' }}>{message}</Text>
+                    </Animated.View>
+
                     <View style={styles.login__form}>
                         <TextInput
                             style={styles.login__input}
                             placeholder='user@exemplo.com'
                             placeholderTextColor={'#fff'}
+                            value={email}
                             underlineColorAndroid={'transparent'}
+                            onChangeText={(texto) => setEmail(texto)}
                         />
                         <BsEnvelope size={26} color='#fff' style={styles.icon} />
 
@@ -79,12 +109,18 @@ export default function Login({ navigation }) {
 
                     </View>
                     <View style={styles.login__footer}>
-                        <TouchableOpacity style={styles.login__button}>
+
+                        <TouchableOpacity style={styles.login__button}
+                            onPress={doLogin}
+                        >
                             <Text style={styles.login__buttonText}>Entrar</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity style={{ flexDirection: 'column', alignItems: 'center' }}>
                             <Text style={styles.login__cadastre} onPress={() => navigation.navigate('Cadastro1')}>Cadastre-se!</Text>
                             <Text style={styles.login__cadastre}>Esqueceu a senha?</Text>
+                            <Text style={styles.login__cadastre} onPress={() => navigation.navigate('AreaRestrita')}>AreaRestrita!</Text>
+                            <Text style={styles.login__cadastre} onPress={() => navigation.navigate('UpdateUser')}>UpdateUser!</Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
@@ -147,6 +183,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         paddingLeft: 70,
         fontWeight: 'bold',
+        color: '#fff'
     },
 
     login__footer: {
@@ -180,19 +217,19 @@ const styles = StyleSheet.create({
     icon: {
         position: 'absolute',
         left: 30,
-        top: 15,
+        top: 12,
     },
 
     iconLockKey: {
         position: 'absolute',
         left: 30,
-        top: 80,
+        top: 77,
     },
 
     iconEyeSlash: {
         position: 'absolute',
         right: 30,
-        top: 80,
+        top: 77,
     },
 
 
